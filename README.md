@@ -2,7 +2,7 @@
 <pre>
 assistant-bot/
 │
-├── main.py
+├── init.py
 │
 ├── models/											
 │   ├── __init__.py

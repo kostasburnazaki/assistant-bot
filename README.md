@@ -1,3 +1,5 @@
+
+<pre>
 assistant-bot/
 │
 ├── main.py
@@ -30,3 +32,4 @@ assistant-bot/
 ├── requirements.txt
 │
 └── README.md
+</pre>  

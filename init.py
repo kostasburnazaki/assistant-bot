@@ -1,4 +1,5 @@
 from __future__ import annotations
+from datetime import datetime
 
 import pickle
 from typing import Dict, List, Tuple, Callable, Optional
@@ -27,6 +28,16 @@ class Phone(Field):
         if not (value.isdigit() and len(value) == 10):
             raise ValueError("Phone number must contain exactly 10 digits.")
         super().__init__(value)
+
+
+class Birthday(Field):
+    """Birthday must be in DD.MM.YYYY format."""
+
+    def __init__(self, value: str):
+        try:
+            self.value = datetime.strptime(value.strip(), "%d.%m.%Y").date()
+        except ValueError:
+            raise ValueError("Invalid date format. Use DD.MM.YYYY")
 
 
 class Record:

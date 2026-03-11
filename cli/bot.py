@@ -40,6 +40,9 @@ def main():
         elif command == "phone":
             print(show_phone(args, book))
 
+        elif command == "remove":
+            print(delete_phone(args, book))
+
         elif command == "all":
             print(show_all(book))
 

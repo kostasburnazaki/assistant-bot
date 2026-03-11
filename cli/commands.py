@@ -53,6 +53,18 @@ def change_contact(args: Tuple[str, ...], book: AddressBook) -> str:
 
 
 @input_error
+def delete_phone(args: List[str], book: AddressBook) -> str:
+
+    name, phone = args
+
+    record = book.find(name)
+
+    record.remove_phone(phone)
+
+    return "Телефон видалено."
+
+
+@input_error
 def show_phone(args: Tuple[str, ...], book: AddressBook) -> str:
     if len(args) < 1:
         raise ValueError("Введіть імʼя")
@@ -78,7 +90,8 @@ def show_all(book: AddressBook) -> str:
 @input_error
 def add_birthday(args: Tuple[str, ...], book: AddressBook) -> str:
     if len(args) < 2:
-        raise ValueError("Запишіть імʼя і день народження у форматі DD.MM.YYYY.")
+        raise ValueError(
+            "Запишіть імʼя і день народження у форматі DD.MM.YYYY.")
     name, birthday_str, *_ = args
     name = name.strip().capitalize()
     record = book.find(name)
@@ -97,7 +110,7 @@ def show_birthday(args: Tuple[str, ...], book: AddressBook) -> str:
     if record is None:
         raise KeyError
     if not record.birthday:
-        return f"No birthday set for {name}."
+        return f"День народження не заданий для {name}."
     return f"{name}'s birthday is {record.birthday}"
 
 
@@ -141,10 +154,11 @@ def show_help() -> str:
         "- add [ім'я] [телефон]: Додати контакт або телефон\n"
         "- change [ім'я] [новий телефон]: Змінити телефон\n"
         "- phone [ім'я]: Показати телефони контакту\n"
+        "- remove [ім'я] [телефон]: Видалити телефон\n"
         "- all: Показати всі контакти\n"
         "- add-birthday [ім'я] [дата DD.MM.YYYY]: Додати день народження\n"
         "- show-birthday [ім'я]: Показати день народження\n"
         "- birthdays: Показати дні народження на наступному тижні\n"
-        "- search: Пошук контакта за іменем чи номером телефону\n"
+        "- search [запит]: Пошук контакта за іменем чи номером телефону\n"
         "- close / exit: Вийти з програми"
     )

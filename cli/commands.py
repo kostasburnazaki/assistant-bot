@@ -53,6 +53,18 @@ def change_contact(args: Tuple[str, ...], book: AddressBook) -> str:
 
 
 @input_error
+def delete_phone(args: List[str], book: AddressBook) -> str:
+
+    name, phone = args
+
+    record = book.find(name)
+
+    record.remove_phone(phone)
+
+    return "Телефон видалено."
+
+
+@input_error
 def show_phone(args: Tuple[str, ...], book: AddressBook) -> str:
     if len(args) < 1:
         raise ValueError("Введіть імʼя")
@@ -78,7 +90,8 @@ def show_all(book: AddressBook) -> str:
 @input_error
 def add_birthday(args: Tuple[str, ...], book: AddressBook) -> str:
     if len(args) < 2:
-        raise ValueError("Запишіть імʼя і день народження у форматі DD.MM.YYYY.")
+        raise ValueError(
+            "Запишіть імʼя і день народження у форматі DD.MM.YYYY.")
     name, birthday_str, *_ = args
     name = name.strip().capitalize()
     record = book.find(name)
@@ -97,7 +110,7 @@ def show_birthday(args: Tuple[str, ...], book: AddressBook) -> str:
     if record is None:
         raise KeyError
     if not record.birthday:
-        return f"No birthday set for {name}."
+        return f"День народження не заданий для {name}."
     return f"{name}'s birthday is {record.birthday}"
 
 
@@ -115,16 +128,59 @@ def birthdays(args: Tuple[str, ...], book: AddressBook) -> str:
 
 @input_error
 def search(args: Tuple[str, ...], book: AddressBook) -> str:
-    if len(args) < 1:
-        raise ValueError("Введіть ім'я або частину імені для пошуку.")
-    query = args[0].strip().capitalize()
+
+    if not args:
+        raise ValueError("Enter name or phone number to search.")
+
+    query = args[0].strip().lower()
+
     results = []
+
     for record in book.data.values():
-        if query in record.name.value:
+
+        if query in record.name.value.lower() or record.find_phone_part(query):
             results.append(str(record))
+
     if not results:
-        return f"Контакт з ім'ям, що містить '{query}', не знайдено."
+        return f"No contacts found for '{query}'."
+
     return "\n".join(results)
+
+
+@input_error
+def add_email(args: List[str], book: AddressBook) -> str:
+
+    name, email = args
+
+    record = book.find(name)
+
+    record.add_email(email)
+
+    return "Email added."
+
+
+@input_error
+def edit_email(args: List[str], book: AddressBook) -> str:
+
+    name, new_email = args
+
+    record = book.find(name)
+
+    record.edit_email(new_email)
+
+    return "Email updated."
+
+@input_error
+def add_address(args: List[str], book: AddressBook) -> str:
+
+    name = args[0]
+    address = " ".join(args[1:])  # щоб підтримувати багатослівні адреси
+
+    record = book.find(name)
+
+    record.add_address(address)
+
+    return "Address added."
 
 
 def show_help() -> str:
@@ -134,9 +190,11 @@ def show_help() -> str:
         "- add [ім'я] [телефон]: Додати контакт або телефон\n"
         "- change [ім'я] [новий телефон]: Змінити телефон\n"
         "- phone [ім'я]: Показати телефони контакту\n"
+        "- remove [ім'я] [телефон]: Видалити телефон\n"
         "- all: Показати всі контакти\n"
         "- add-birthday [ім'я] [дата DD.MM.YYYY]: Додати день народження\n"
         "- show-birthday [ім'я]: Показати день народження\n"
         "- birthdays: Показати дні народження на наступному тижні\n"
+        "- search [запит]: Пошук контакта за іменем чи номером телефону\n"
         "- close / exit: Вийти з програми"
     )

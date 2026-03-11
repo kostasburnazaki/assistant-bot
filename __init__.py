@@ -1,4 +1,5 @@
 from __future__ import annotations
+from datetime import datetime, date
 
 import pickle
 from typing import Dict, List, Tuple, Callable, Optional
@@ -29,10 +30,21 @@ class Phone(Field):
         super().__init__(value)
 
 
+class Birthday(Field):
+    """Birthday must be in DD.MM.YYYY format."""
+
+    def __init__(self, value: str):
+        try:
+            self.value = datetime.strptime(value.strip(), "%d.%m.%Y").date()
+        except ValueError:
+            raise ValueError("Invalid date format. Use DD.MM.YYYY")
+
+
 class Record:
     def __init__(self, name: str):
         self.name = Name(name)
         self.phones: List[Phone] = []
+        self.birthday: Optional[Birthday] = None
 
     def add_phone(self, phone: str) -> None:
         self.phones.append(Phone(phone))
@@ -60,10 +72,14 @@ class Record:
                 return p
         return None
 
+    def add_birthday(self, birthday: str) -> None:
+        self.birthday = Birthday(birthday)
+
     def __str__(self) -> str:
         phones_str = "; ".join(
             p.value for p in self.phones) if self.phones else "-"
-        return f"Contact name: {self.name.value}, phones: {phones_str}"
+        birthday_str = self.birthday.value.strftime("%d.%m.%Y") if self.birthday else "-"
+        return f"Contact name: {self.name.value}, phones: {phones_str}, birthday: {birthday_str}"
 
 
 class AddressBook(UserDict):
@@ -81,6 +97,27 @@ class AddressBook(UserDict):
             del self.data[name]
         except KeyError:
             raise KeyError("Contact not found.")
+
+    def get_upcoming_birthdays(self, days: int = 7) -> List[Dict]:
+        today = date.today()
+        upcoming = []
+
+        for record in self.data.values():
+            if record.birthday is None:
+                continue
+
+            birthday_this_year = record.birthday.value.replace(year=today.year)
+
+            if birthday_this_year < today:
+                birthday_this_year = birthday_this_year.replace(year=today.year + 1)
+
+            if 0 <= (birthday_this_year - today).days <= days:
+                upcoming.append({
+                    "name": record.name.value,
+                    "birthday": birthday_this_year.strftime("%d.%m.%Y"),
+                })
+
+        return upcoming
 
 
 def save_data(book: AddressBook, filename: str = "addressbook.pkl") -> None:
@@ -172,6 +209,41 @@ def show_all(book: AddressBook) -> str:
     return "\n".join(str(record) for record in book.data.values())
 
 
+@input_error
+def add_birthday(args: List[str], book: AddressBook) -> str:
+    """add-birthday <name> <DD.MM.YYYY>"""
+    name, birthday = args
+
+    record = book.find(name)
+    record.add_birthday(birthday)
+
+    return "Birthday added."
+
+
+@input_error
+def show_birthday(args: List[str], book: AddressBook) -> str:
+    """show-birthday <name>"""
+    name = args[0]
+
+    record = book.find(name)
+
+    if record.birthday is None:
+        return "Birthday not set."
+
+    return f"{record.name.value}'s birthday: {record.birthday.value.strftime('%d.%m.%Y')}"
+
+
+def show_upcoming_birthdays(book: AddressBook) -> str:
+    """birthdays -- show contacts with birthdays in the next 7 days."""
+    upcoming = book.get_upcoming_birthdays()
+
+    if not upcoming:
+        return "No upcoming birthdays."
+
+    lines = [f"{entry['name']}: {entry['birthday']}" for entry in upcoming]
+    return "\n".join(lines)
+
+
 def main() -> None:
     book = load_data()
 
@@ -196,6 +268,12 @@ def main() -> None:
             print(show_phone(args, book))
         elif command == "all":
             print(show_all(book))
+        elif command == "add-birthday":
+            print(add_birthday(args, book))
+        elif command == "show-birthday":
+            print(show_birthday(args, book))
+        elif command == "birthdays":
+            print(show_upcoming_birthdays(book))
         else:
             print("Invalid command.")
 

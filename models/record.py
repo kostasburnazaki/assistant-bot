@@ -100,9 +100,21 @@ class Record:
 
         self.address = Address(address)
 
-
+    # -------- String output --------
     def __str__(self):
-        phones_str = "; ".join(
-            p.value for p in self.phones) if self.phones else "No phones"
-        birthday_str = f", birthday: {self.birthday}" if self.birthday else ""
-        return f"Contact name: {self.name.value}, phones: {phones_str}{birthday_str}"
+
+        phones_str = "; ".join(p.value for p in self.phones) if self.phones else "No phones"
+
+        email_str = self.email.value if self.email else "No email"
+
+        address_str = self.address.value if self.address else "No address"
+
+        birthday_str = self.birthday.value if self.birthday else "No birthday"
+
+        return (
+            f"Contact name: {self.name.value}, "
+            f"phones: {phones_str}, "
+            f"email: {email_str}, "
+            f"address: {address_str}, "
+            f"birthday: {birthday_str}"
+        )

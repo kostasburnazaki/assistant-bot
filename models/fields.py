@@ -44,6 +44,7 @@ class Birthday(Field):
     def __str__(self):
         return self.value.strftime("%d.%m.%Y")
 
+
 class Email(Field):
     """Validate email format."""
 
@@ -54,5 +55,17 @@ class Email(Field):
 
         if not re.match(pattern, value):
             raise ValueError("Invalid email format.")
+
+        super().__init__(value)
+
+
+class Address(Field):
+    """Simple text address."""
+
+    def __init__(self, value: str):
+        value = value.strip()
+
+        if not value:
+            raise ValueError("Address cannot be empty.")
 
         super().__init__(value)

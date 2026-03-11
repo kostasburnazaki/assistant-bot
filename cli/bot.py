@@ -14,7 +14,7 @@ VALID_COMMANDS = [
 
 def main():
     book = load_data()
-    print("Бот-помічник запущено. Введіть команду або 'exit'/'close' для виходу.")
+    print("Бот-помічник запущено. Введіть команду або 'exit'/'close' для виходу. help для справки")
     while True:
         user_input = input("Enter a command: ").strip()
         if not user_input:

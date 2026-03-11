@@ -38,13 +38,13 @@ class Record:
 
         raise ValueError("Old phone not found.")
     
-    def find_phone(self, phone: str) -> Optional[Phone]:
-        phone = phone.strip()
+    def find_phone_part(self, query: str) -> Optional[Phone]:
 
-        for p in self.phones:
+        query = query.strip()
 
-            if p.value == phone:
-                return p
+        for phone in self.phones:
+            if query in phone.value:
+                return phone
 
         return None
 

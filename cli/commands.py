@@ -115,15 +115,22 @@ def birthdays(args: Tuple[str, ...], book: AddressBook) -> str:
 
 @input_error
 def search(args: Tuple[str, ...], book: AddressBook) -> str:
-    if len(args) < 1:
-        raise ValueError("Введіть ім'я або частину імені для пошуку.")
-    query = args[0].strip().capitalize()
+
+    if not args:
+        raise ValueError("Enter name or phone number to search.")
+
+    query = args[0].strip().lower()
+
     results = []
+
     for record in book.data.values():
-        if query in record.name.value:
+
+        if query in record.name.value.lower() or record.find_phone_part(query):
             results.append(str(record))
+
     if not results:
-        return f"Контакт з ім'ям, що містить '{query}', не знайдено."
+        return f"No contacts found for '{query}'."
+
     return "\n".join(results)
 
 
@@ -138,5 +145,6 @@ def show_help() -> str:
         "- add-birthday [ім'я] [дата DD.MM.YYYY]: Додати день народження\n"
         "- show-birthday [ім'я]: Показати день народження\n"
         "- birthdays: Показати дні народження на наступному тижні\n"
+        "- search: Пошук контакта за іменем чи номером телефону\n"
         "- close / exit: Вийти з програми"
     )

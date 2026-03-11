@@ -43,3 +43,16 @@ class Birthday(Field):
 
     def __str__(self):
         return self.value.strftime("%d.%m.%Y")
+
+class Email(Field):
+    """Validate email format."""
+
+    def __init__(self, value: str):
+        value = value.strip()
+
+        pattern = r"^[\w\.-]+@[\w\.-]+\.\w+$"
+
+        if not re.match(pattern, value):
+            raise ValueError("Invalid email format.")
+
+        super().__init__(value)

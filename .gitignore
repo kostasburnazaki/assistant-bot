@@ -1,3 +1,4 @@
 .idea/*
-**/addressbook.pkl
 .vscode/
+.venv/
+**/__pycache__

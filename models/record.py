@@ -94,6 +94,13 @@ class Record:
 
         self.email = Email(email)
 
+    # -------- Address --------
+
+    def add_address(self, address: str):
+
+        self.address = Address(address)
+
+
     def __str__(self):
         phones_str = "; ".join(
             p.value for p in self.phones) if self.phones else "No phones"

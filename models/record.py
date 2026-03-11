@@ -80,6 +80,19 @@ class Record:
                 next_birthday = bday.replace(year=year + 1)
 
         return (next_birthday - today).days
+    
+    # -------- Email --------
+    
+    def add_email(self, email: str):
+
+        self.email = Email(email)
+
+    def edit_email(self, email: str):
+
+        if self.email is None:
+            raise ValueError("Email not set.")
+
+        self.email = Email(email)
 
     def __str__(self):
         phones_str = "; ".join(

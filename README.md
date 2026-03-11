@@ -1,10 +1,21 @@
+# Встановлення
+
+```bash
+pip install --editable .
+
+# Запуск
+assistant
+
+для запуску коду з консолі:
+`python run.py`.
+
 
 <pre>
 assistant-bot/
 │
 ├── init.py
 │
-├── models/											
+├── models/
 │   ├── __init__.py
 │   ├── fields.py
 │   ├── record.py
@@ -32,4 +43,5 @@ assistant-bot/
 ├── requirements.txt
 │
 └── README.md
-</pre>  
+</pre>
+```

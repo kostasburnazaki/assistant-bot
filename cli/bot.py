@@ -2,13 +2,13 @@
 from cli.parser import parse_input
 from cli.commands import (
     add_contact, change_contact, show_phone, show_all,
-    add_birthday, show_birthday, birthdays, search, show_help
+    add_birthday, show_birthday, birthdays, search, add_email, edit_email, add_address, show_help
 )
 from services.storage import load_data, save_data
 
 VALID_COMMANDS = [
     "hello", "help", "add", "change", "phone", "all",
-    "add-birthday", "show-birthday", "birthdays", "close", "exit", "search"
+    "add-birthday", "show-birthday", "birthdays", "close", "exit", "search", "email", "edit-email", "address", "remove"
 ]
 
 
@@ -57,6 +57,15 @@ def main():
 
         elif command == "search":
             print(search(args, book))
+
+        elif command == "email":
+            print(add_email(args, book))
+
+        elif command == "edit-email":
+            print(edit_email(args, book))
+
+        elif command == "address":
+            print(add_address(args, book))
 
         else:
             print("Invalid command.")

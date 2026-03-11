@@ -147,6 +147,42 @@ def search(args: Tuple[str, ...], book: AddressBook) -> str:
     return "\n".join(results)
 
 
+@input_error
+def add_email(args: List[str], book: AddressBook) -> str:
+
+    name, email = args
+
+    record = book.find(name)
+
+    record.add_email(email)
+
+    return "Email added."
+
+
+@input_error
+def edit_email(args: List[str], book: AddressBook) -> str:
+
+    name, new_email = args
+
+    record = book.find(name)
+
+    record.edit_email(new_email)
+
+    return "Email updated."
+
+@input_error
+def add_address(args: List[str], book: AddressBook) -> str:
+
+    name = args[0]
+    address = " ".join(args[1:])  # щоб підтримувати багатослівні адреси
+
+    record = book.find(name)
+
+    record.add_address(address)
+
+    return "Address added."
+
+
 def show_help() -> str:
     return (
         "Доступні команди:\n"

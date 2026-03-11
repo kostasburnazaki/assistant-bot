@@ -1,5 +1,5 @@
 from __future__ import annotations
-from datetime import datetime
+from datetime import datetime, date
 
 import pickle
 from typing import Dict, List, Tuple, Callable, Optional
@@ -209,6 +209,41 @@ def show_all(book: AddressBook) -> str:
     return "\n".join(str(record) for record in book.data.values())
 
 
+@input_error
+def add_birthday(args: List[str], book: AddressBook) -> str:
+    """add-birthday <name> <DD.MM.YYYY>"""
+    name, birthday = args
+
+    record = book.find(name)
+    record.add_birthday(birthday)
+
+    return "Birthday added."
+
+
+@input_error
+def show_birthday(args: List[str], book: AddressBook) -> str:
+    """show-birthday <name>"""
+    name = args[0]
+
+    record = book.find(name)
+
+    if record.birthday is None:
+        return "Birthday not set."
+
+    return f"{record.name.value}'s birthday: {record.birthday.value.strftime('%d.%m.%Y')}"
+
+
+def show_upcoming_birthdays(book: AddressBook) -> str:
+    """birthdays -- show contacts with birthdays in the next 7 days."""
+    upcoming = book.get_upcoming_birthdays()
+
+    if not upcoming:
+        return "No upcoming birthdays."
+
+    lines = [f"{entry['name']}: {entry['birthday']}" for entry in upcoming]
+    return "\n".join(lines)
+
+
 def main() -> None:
     book = load_data()
 
@@ -233,6 +268,12 @@ def main() -> None:
             print(show_phone(args, book))
         elif command == "all":
             print(show_all(book))
+        elif command == "add-birthday":
+            print(add_birthday(args, book))
+        elif command == "show-birthday":
+            print(show_birthday(args, book))
+        elif command == "birthdays":
+            print(show_upcoming_birthdays(book))
         else:
             print("Invalid command.")
 

@@ -98,6 +98,27 @@ class AddressBook(UserDict):
         except KeyError:
             raise KeyError("Contact not found.")
 
+    def get_upcoming_birthdays(self, days: int = 7) -> List[Dict]:
+        today = date.today()
+        upcoming = []
+
+        for record in self.data.values():
+            if record.birthday is None:
+                continue
+
+            birthday_this_year = record.birthday.value.replace(year=today.year)
+
+            if birthday_this_year < today:
+                birthday_this_year = birthday_this_year.replace(year=today.year + 1)
+
+            if 0 <= (birthday_this_year - today).days <= days:
+                upcoming.append({
+                    "name": record.name.value,
+                    "birthday": birthday_this_year.strftime("%d.%m.%Y"),
+                })
+
+        return upcoming
+
 
 def save_data(book: AddressBook, filename: str = "addressbook.pkl") -> None:
     """Save address book to file using pickle."""

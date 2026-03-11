@@ -37,6 +37,16 @@ class Record:
                 return
 
         raise ValueError("Old phone not found.")
+    
+    def find_phone(self, phone: str) -> Optional[Phone]:
+        phone = phone.strip()
+
+        for p in self.phones:
+
+            if p.value == phone:
+                return p
+
+        return None
 
     def add_birthday(self, birthday_str: str):
         self.birthday = Birthday(birthday_str)

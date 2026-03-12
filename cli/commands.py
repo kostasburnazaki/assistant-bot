@@ -103,6 +103,7 @@ def show_all(book: AddressBook):
     table.add_column("Phones", style="green")
     table.add_column("Email", style="magenta")
     table.add_column("Address", style="white")
+    table.add_column("Birthday", style="green")
 
     for record in book.data.values():
 
@@ -110,12 +111,14 @@ def show_all(book: AddressBook):
 
         email = record.email.value if record.email else "-"
         address = record.address.value if record.address else "-"
+        birthday = record.birthday.value.strftime('%m/%d/%Y') if record.birthday else "-"
 
         table.add_row(
             record.name.value,
             phones,
             email,
-            address
+            address,
+            birthday
         )
 
     console.print(table)

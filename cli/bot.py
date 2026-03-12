@@ -2,7 +2,7 @@
 from cli.parser import parse_input, suggest_command
 from cli.commands import (
     add_contact, change_contact, show_phone, show_all,
-    add_birthday, show_birthday, birthdays, search, add_email, edit_email, add_address, show_help, delete_phone
+    add_birthday, show_birthday, birthdays, search, add_email, edit_email, add_address, show_help, delete_phone, remove_contact
 )
 from services.storage import load_data, save_data
 
@@ -21,7 +21,8 @@ AVAILABLE_COMMANDS = [
     "email",
     "edit-email",
     "address",
-    "remove",
+    "remove-phone",
+    "remove-contact",
     "exit",
     "close"
 ]
@@ -55,8 +56,11 @@ def main():
         elif command == "phone":
             print(show_phone(args, book))
 
-        elif command == "remove":
+        elif command == "remove-phone":
             print(delete_phone(args, book))
+
+        elif command == "remove-contact":
+            print(remove_contact(args, book))
 
         elif command == "all":
             print(show_all(book))

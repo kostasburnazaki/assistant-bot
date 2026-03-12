@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Tuple, List
 from models.addressbook import AddressBook
 from models.record import Record
 from services.storage import save_data
@@ -76,6 +76,16 @@ def show_phone(args: Tuple[str, ...], book: AddressBook) -> str:
         return f"У контакту {name} немає номерів."
     phones_str = "; ".join(p.value for p in record.phones)
     return f"{name}: {phones_str}"
+
+
+@input_error
+def remove_contact(args: List[str], book: AddressBook) -> str:
+
+    name = args[0]
+
+    book.delete(name)
+
+    return f"Contact '{name}' removed."
 
 
 def show_all(book: AddressBook) -> str:
@@ -170,6 +180,7 @@ def edit_email(args: List[str], book: AddressBook) -> str:
 
     return "Email updated."
 
+
 @input_error
 def add_address(args: List[str], book: AddressBook) -> str:
 
@@ -190,7 +201,8 @@ def show_help() -> str:
         "- add [ім'я] [телефон]: Додати контакт або телефон\n"
         "- change [ім'я] [новий телефон]: Змінити телефон\n"
         "- phone [ім'я]: Показати телефони контакту\n"
-        "- remove [ім'я] [телефон]: Видалити телефон\n"
+        "- remove-phone [ім'я] [телефон]: Видалити телефон\n"
+        "- remove-contact [ім'я]: Видалити контакт\n"
         "- all: Показати всі контакти\n"
         "- add-birthday [ім'я] [дата DD.MM.YYYY]: Додати день народження\n"
         "- show-birthday [ім'я]: Показати день народження\n"

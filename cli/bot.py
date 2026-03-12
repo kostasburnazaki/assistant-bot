@@ -5,6 +5,7 @@ from cli.commands import (
     add_birthday, show_birthday, birthdays, search, add_email, edit_email, add_address, show_help, delete_phone, remove_contact
 )
 from services.storage import load_data, save_data
+from rich.console import Console
 
 
 AVAILABLE_COMMANDS = [
@@ -30,11 +31,14 @@ AVAILABLE_COMMANDS = [
 
 def main():
     book = load_data()
-    print("Бот-помічник запущено. Введіть команду або 'exit'/'close' для виходу. help для справки")
+    console = Console()
+    console.print(
+        "[bold green]Бот-помічник запущено. Введіть команду або 'exit'/'close' для виходу. help для справки[/bold green]")
     while True:
-        user_input = input("Enter a command: ").strip()
+        console.print("[bold blue]Enter command:[/bold blue]", end=" ")
+        user_input = input()
         if not user_input:
-            print("Invalid command.")
+            console.print("[bold red]Invalid command.[/bold red]")
             continue
 
         command, args = parse_input(user_input)
@@ -91,6 +95,8 @@ def main():
             suggestion = suggest_command(command, AVAILABLE_COMMANDS)
 
             if suggestion:
-                print(f"Unknown command '{command}'. Did you mean '{suggestion}'?")
+                console.print(
+                    f"[yellow]Unknown command '{command}'. Did you mean[/yellow] [bold]{suggestion}[/bold]?"
+                )
             else:
-                print("Invalid command.")
+                console.print("[bold red]Invalid command.[/bold red]")

@@ -4,6 +4,8 @@ from models.record import Record
 from services.storage import save_data
 from services.birthdays import get_upcoming_birthdays
 from cli.parser import parse_input
+from rich.table import Table
+from rich.console import Console
 
 
 def input_error(handler):
@@ -88,13 +90,35 @@ def remove_contact(args: List[str], book: AddressBook) -> str:
     return f"Contact '{name}' removed."
 
 
-def show_all(book: AddressBook) -> str:
+def show_all(book: AddressBook):
+    console = Console()
+
     if not book.data:
-        return "Книга контактів порожня."
-    result = "Контакти:\n"
+        console.print("[yellow]No contacts saved.[/yellow]")
+        return
+
+    table = Table(title="Contacts")
+
+    table.add_column("Name", style="cyan")
+    table.add_column("Phones", style="green")
+    table.add_column("Email", style="magenta")
+    table.add_column("Address", style="white")
+
     for record in book.data.values():
-        result += f"{record}\n"
-    return result.strip()
+
+        phones = "; ".join(p.value for p in record.phones)
+
+        email = record.email.value if record.email else "-"
+        address = record.address.value if record.address else "-"
+
+        table.add_row(
+            record.name.value,
+            phones,
+            email,
+            address
+        )
+
+    console.print(table)
 
 
 @input_error

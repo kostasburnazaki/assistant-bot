@@ -1,14 +1,29 @@
 # cli/bot.py
-from cli.parser import parse_input
+from cli.parser import parse_input, suggest_command
 from cli.commands import (
     add_contact, change_contact, show_phone, show_all,
     add_birthday, show_birthday, birthdays, search, add_email, edit_email, add_address, show_help
 )
 from services.storage import load_data, save_data
 
-VALID_COMMANDS = [
-    "hello", "help", "add", "change", "phone", "all",
-    "add-birthday", "show-birthday", "birthdays", "close", "exit", "search", "email", "edit-email", "address", "remove"
+
+AVAILABLE_COMMANDS = [
+    "hello",
+    "help",
+    "add",
+    "change",
+    "phone",
+    "all",
+    "add-birthday",
+    "show-birthday",
+    "birthdays",
+    "search",
+    "email",
+    "edit-email",
+    "address",
+    "remove",
+    "exit",
+    "close"
 ]
 
 
@@ -68,4 +83,10 @@ def main():
             print(add_address(args, book))
 
         else:
-            print("Invalid command.")
+
+            suggestion = suggest_command(command, AVAILABLE_COMMANDS)
+
+            if suggestion:
+                print(f"Unknown command '{command}'. Did you mean '{suggestion}'?")
+            else:
+                print("Invalid command.")

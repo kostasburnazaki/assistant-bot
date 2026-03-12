@@ -2,7 +2,7 @@
 from cli.parser import parse_input, suggest_command
 from cli.commands import (
     add_contact, change_contact, show_phone, show_all,
-    add_birthday, show_birthday, birthdays, search, add_email, edit_email, add_address, show_help
+    add_birthday, show_birthday, birthdays, search, add_email, edit_email, add_address, show_help, delete_phone
 )
 from services.storage import load_data, save_data
 

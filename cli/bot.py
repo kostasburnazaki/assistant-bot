@@ -1,24 +1,44 @@
 # cli/bot.py
-from cli.parser import parse_input
+from cli.parser import parse_input, suggest_command
 from cli.commands import (
     add_contact, change_contact, show_phone, show_all,
-    add_birthday, show_birthday, birthdays, search, add_email, edit_email, add_address, show_help
+    add_birthday, show_birthday, birthdays, search, add_email, edit_email, add_address, show_help, delete_phone, remove_contact
 )
 from services.storage import load_data, save_data
+from rich.console import Console
 
-VALID_COMMANDS = [
-    "hello", "help", "add", "change", "phone", "all",
-    "add-birthday", "show-birthday", "birthdays", "close", "exit", "search", "email", "edit-email", "address", "remove"
+
+AVAILABLE_COMMANDS = [
+    "hello",
+    "help",
+    "add",
+    "change",
+    "phone",
+    "all",
+    "add-birthday",
+    "show-birthday",
+    "birthdays",
+    "search",
+    "email",
+    "edit-email",
+    "address",
+    "remove-phone",
+    "remove-contact",
+    "exit",
+    "close"
 ]
 
 
 def main():
     book = load_data()
-    print("Бот-помічник запущено. Введіть команду або 'exit'/'close' для виходу. help для справки")
+    console = Console()
+    console.print(
+        "[bold green]Бот-помічник запущено. Введіть команду або 'exit'/'close' для виходу. help для справки[/bold green]")
     while True:
-        user_input = input("Enter a command: ").strip()
+        console.print("[bold blue]Enter command:[/bold blue]", end=" ")
+        user_input = input()
         if not user_input:
-            print("Invalid command.")
+            console.print("[bold red]Invalid command.[/bold red]")
             continue
 
         command, args = parse_input(user_input)
@@ -40,8 +60,11 @@ def main():
         elif command == "phone":
             print(show_phone(args, book))
 
-        elif command == "remove":
+        elif command == "remove-phone":
             print(delete_phone(args, book))
+
+        elif command == "remove-contact":
+            print(remove_contact(args, book))
 
         elif command == "all":
             print(show_all(book))
@@ -68,4 +91,12 @@ def main():
             print(add_address(args, book))
 
         else:
-            print("Invalid command.")
+
+            suggestion = suggest_command(command, AVAILABLE_COMMANDS)
+
+            if suggestion:
+                console.print(
+                    f"[yellow]Unknown command '{command}'. Did you mean[/yellow] [bold]{suggestion}[/bold]?"
+                )
+            else:
+                console.print("[bold red]Invalid command.[/bold red]")

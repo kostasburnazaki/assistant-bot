@@ -1,9 +1,11 @@
-from typing import Tuple
+from typing import Tuple, List
 from models.addressbook import AddressBook
 from models.record import Record
 from services.storage import save_data
 from services.birthdays import get_upcoming_birthdays
 from cli.parser import parse_input
+from rich.table import Table
+from rich.console import Console
 
 
 def input_error(handler):
@@ -78,13 +80,48 @@ def show_phone(args: Tuple[str, ...], book: AddressBook) -> str:
     return f"{name}: {phones_str}"
 
 
-def show_all(book: AddressBook) -> str:
+@input_error
+def remove_contact(args: List[str], book: AddressBook) -> str:
+
+    name = args[0]
+
+    book.delete(name)
+
+    return f"Contact '{name}' removed."
+
+
+def show_all(book: AddressBook):
+    console = Console()
+
     if not book.data:
-        return "Книга контактів порожня."
-    result = "Контакти:\n"
+        console.print("[yellow]No contacts saved.[/yellow]")
+        return
+
+    table = Table(title="Contacts")
+
+    table.add_column("Name", style="cyan")
+    table.add_column("Phones", style="green")
+    table.add_column("Email", style="magenta")
+    table.add_column("Address", style="white")
+    table.add_column("Birthday", style="green")
+
     for record in book.data.values():
-        result += f"{record}\n"
-    return result.strip()
+
+        phones = "; ".join(p.value for p in record.phones)
+
+        email = record.email.value if record.email else "-"
+        address = record.address.value if record.address else "-"
+        birthday = record.birthday.value.strftime('%m/%d/%Y') if record.birthday else "-"
+
+        table.add_row(
+            record.name.value,
+            phones,
+            email,
+            address,
+            birthday
+        )
+
+    console.print(table)
 
 
 @input_error
@@ -170,6 +207,7 @@ def edit_email(args: List[str], book: AddressBook) -> str:
 
     return "Email updated."
 
+
 @input_error
 def add_address(args: List[str], book: AddressBook) -> str:
 
@@ -190,7 +228,8 @@ def show_help() -> str:
         "- add [ім'я] [телефон]: Додати контакт або телефон\n"
         "- change [ім'я] [новий телефон]: Змінити телефон\n"
         "- phone [ім'я]: Показати телефони контакту\n"
-        "- remove [ім'я] [телефон]: Видалити телефон\n"
+        "- remove-phone [ім'я] [телефон]: Видалити телефон\n"
+        "- remove-contact [ім'я]: Видалити контакт\n"
         "- all: Показати всі контакти\n"
         "- add-birthday [ім'я] [дата DD.MM.YYYY]: Додати день народження\n"
         "- show-birthday [ім'я]: Показати день народження\n"

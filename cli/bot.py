@@ -2,8 +2,11 @@
 from cli.parser import parse_input, suggest_command
 from cli.commands import (
     add_contact, change_contact, show_phone, show_all,
-    add_birthday, show_birthday, birthdays, search, add_email, edit_email, add_address, show_help, delete_phone, remove_contact
+    add_birthday, show_birthday, birthdays, search, add_email, edit_email,
+    add_address, show_help, delete_phone, remove_contact,
+    note_add, note_edit, note_delete, note_search, note_tag, note_list,
 )
+from notes.notebook import NotesBook
 from services.storage import load_data, save_data
 from rich.console import Console
 
@@ -22,6 +25,12 @@ AVAILABLE_COMMANDS = [
     "email",
     "edit-email",
     "address",
+    "note-add",
+    "note-edit",
+    "note-delete",
+    "note-search",
+    "note-tag",
+    "note-list",
     "remove-phone",
     "remove-contact",
     "exit",
@@ -31,6 +40,7 @@ AVAILABLE_COMMANDS = [
 
 def main():
     book = load_data()
+    notes_book = NotesBook()
     console = Console()
     console.print(
         "[bold green]Бот-помічник запущено. Введіть команду або 'exit'/'close' для виходу. help для справки[/bold green]")
@@ -41,7 +51,11 @@ def main():
             console.print("[bold red]Invalid command.[/bold red]")
             continue
 
-        command, args = parse_input(user_input)
+        try:
+            command, args = parse_input(user_input)
+        except ValueError as error:
+            console.print(f"[bold red]{error}[/bold red]")
+            continue
 
         if command in ["close", "exit"]:
             save_data(book)
@@ -89,6 +103,24 @@ def main():
 
         elif command == "address":
             print(add_address(args, book))
+
+        elif command == "note-add":
+            print(note_add(tuple(args), notes_book))
+
+        elif command == "note-edit":
+            print(note_edit(tuple(args), notes_book))
+
+        elif command == "note-delete":
+            print(note_delete(tuple(args), notes_book))
+
+        elif command == "note-search":
+            print(note_search(tuple(args), notes_book))
+
+        elif command == "note-tag":
+            print(note_tag(tuple(args), notes_book))
+
+        elif command == "note-list":
+            print(note_list(tuple(args), notes_book))
 
         else:
 

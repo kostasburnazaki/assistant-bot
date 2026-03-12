@@ -1,8 +1,13 @@
 import difflib
+import shlex
 
 
 def parse_input(user_input: str):
-    parts = user_input.strip().split()
+    try:
+        parts = shlex.split(user_input.strip())
+    except ValueError as error:
+        raise ValueError("Invalid command format. Check quotes in your input.") from error
+
     if not parts:
         return "", []
     cmd = parts[0].lower()

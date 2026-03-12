@@ -1,9 +1,9 @@
 from typing import Tuple, List
 from models.addressbook import AddressBook
 from models.record import Record
-from services.storage import save_data
 from services.birthdays import get_upcoming_birthdays
-from cli.parser import parse_input
+from notes.note import Note, parse_tags
+from notes.notebook import NotesBook
 from rich.table import Table
 from rich.console import Console
 
@@ -19,6 +19,35 @@ def input_error(handler):
         except IndexError:
             return "Enter user name."
     return wrapper
+
+
+def _parse_note_id(raw_value: str) -> int:
+    """Validate note ID from CLI input."""
+    try:
+        note_id = int(raw_value)
+    except ValueError as error:
+        raise ValueError("Note ID must be an integer.") from error
+
+    if note_id <= 0:
+        raise ValueError("Note ID must be positive.")
+
+    return note_id
+
+
+def _format_note(note: Note) -> str:
+    tags_value = ", ".join(f"#{tag}" for tag in note.tags) if note.tags else "-"
+    return (
+        f"[{note.note_id}] {note.text}\n"
+        f"  Tags: {tags_value}\n"
+        f"  Created: {note.created_at}\n"
+        f"  Updated: {note.updated_at}"
+    )
+
+
+def _format_notes(notes: List[Note]) -> str:
+    if not notes:
+        return "No notes found."
+    return "\n\n".join(_format_note(note) for note in notes)
 
 
 @input_error
@@ -221,6 +250,65 @@ def add_address(args: List[str], book: AddressBook) -> str:
     return "Address added."
 
 
+@input_error
+def note_add(args: Tuple[str, ...], notes_book: NotesBook) -> str:
+    if not args:
+        raise ValueError("Usage: note-add \"text\" [tag1,tag2]")
+
+    text = args[0]
+    tags = parse_tags(args[1]) if len(args) > 1 else []
+    note = notes_book.add_note(text, tags)
+    return f"Note created with ID {note.note_id}."
+
+
+@input_error
+def note_edit(args: Tuple[str, ...], notes_book: NotesBook) -> str:
+    if len(args) < 2:
+        raise ValueError("Usage: note-edit <id> \"new text\" [tag1,tag2]")
+
+    note_id = _parse_note_id(args[0])
+    new_text = args[1]
+    new_tags = parse_tags(args[2]) if len(args) > 2 else None
+    note = notes_book.edit_note(note_id, new_text=new_text, new_tags=new_tags)
+    return f"Note {note.note_id} updated."
+
+
+@input_error
+def note_delete(args: Tuple[str, ...], notes_book: NotesBook) -> str:
+    if len(args) != 1:
+        raise ValueError("Usage: note-delete <id>")
+
+    note_id = _parse_note_id(args[0])
+    notes_book.delete_note(note_id)
+    return f"Note {note_id} deleted."
+
+
+@input_error
+def note_search(args: Tuple[str, ...], notes_book: NotesBook) -> str:
+    if len(args) != 1:
+        raise ValueError("Usage: note-search \"query\"")
+
+    results = notes_book.search_notes(args[0])
+    return _format_notes(results)
+
+
+@input_error
+def note_tag(args: Tuple[str, ...], notes_book: NotesBook) -> str:
+    if len(args) != 1:
+        raise ValueError("Usage: note-tag <tag>")
+
+    results = notes_book.search_by_tag(args[0])
+    return _format_notes(results)
+
+
+@input_error
+def note_list(args: Tuple[str, ...], notes_book: NotesBook) -> str:
+    if args:
+        raise ValueError("Usage: note-list")
+
+    return _format_notes(notes_book.list_notes())
+
+
 def show_help() -> str:
     return (
         "Доступні команди:\n"
@@ -235,5 +323,11 @@ def show_help() -> str:
         "- show-birthday [ім'я]: Показати день народження\n"
         "- birthdays: Показати дні народження на наступному тижні\n"
         "- search [запит]: Пошук контакта за іменем чи номером телефону\n"
+        "- note-add [\"текст\"] [tag1,tag2]: Додати нотатку\n"
+        "- note-edit [id] [\"новий текст\"] [tag1,tag2]: Редагувати нотатку\n"
+        "- note-delete [id]: Видалити нотатку\n"
+        "- note-search [\"запит\"]: Пошук по тексту нотаток\n"
+        "- note-tag [tag]: Пошук нотаток за тегом\n"
+        "- note-list: Показати всі нотатки\n"
         "- close / exit: Вийти з програми"
     )

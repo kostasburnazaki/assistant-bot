@@ -1,47 +1,119 @@
-# Встановлення
+````markdown
+# Assistant Bot
+
+Консольний бот-помічник для роботи з адресною книгою, нотатками та інтелектуальним пошуком.
+
+---
+
+## Встановлення
+
+Виконайте команду у корені проєкту для локальної установки в режимі розробки:
 
 ```bash
 pip install --editable .
+```
+````
 
-# Запуск
+---
+
+## Запуск
+
+Після встановлення можна запускати бота простою командою:
+
+```bash
 assistant
+```
 
-для запуску коду з консолі:
-`python run.py`.
+Або без встановлення — через запуск скрипта:
 
+```bash
+python run.py
+```
 
-<pre>
+---
+
+## Доступні команди
+
+```
+- hello / help: Показати цю підказку
+- add [ім'я] [телефон]: Додати контакт або телефон
+- change [ім'я] [новий телефон]: Змінити телефон
+- phone [ім'я]: Показати телефони контакту
+- remove-phone [ім'я] [телефон]: Видалити телефон
+- remove-contact [ім'я]: Видалити контакт
+- all: Показати всі контакти
+- add-birthday [ім'я] [дата DD.MM.YYYY]: Додати день народження
+- show-birthday [ім'я]: Показати день народження
+- birthdays: Показати дні народження на наступному тижні
+- search [запит]: Пошук контакта за іменем чи номером телефону
+- note-add ["текст"] [tag1,tag2]: Додати нотатку
+- note-edit [id] ["новий текст"] [tag1,tag2]: Редагувати нотатку
+- note-delete [id]: Видалити нотатку
+- note-search ["запит"]: Пошук по тексту нотаток
+- note-tag [tag]: Пошук нотаток за тегом
+- note-list: Показати всі нотатки
+- close / exit: Вийти з програми
+```
+
+---
+
+## Структура проєкту
+
+```
 assistant-bot/
 │
-├── init.py
+├── __init__.py
 │
 ├── models/
-│   ├── __init__.py
-│   ├── fields.py
-│   ├── record.py
-│   ├── addressbook.py
+│   ├── __init__.py
+│   ├── fields.py
+│   ├── record.py
+│   ├── addressbook.py
 │
 ├── notes/
-│   ├── __init__.py
-│   ├── note.py
-│   ├── notebook.py
+│   ├── __init__.py
+│   ├── note.py
+│   ├── notebook.py
 │
 ├── services/
-│   ├── __init__.py
-│   ├── storage.py
-│   ├── birthdays.py
-│   ├── search.py
+│   ├── __init__.py
+│   ├── storage.py
+│   ├── birthdays.py
+│   ├── search.py
 │
 ├── cli/
-│   ├── __init__.py
-│   ├── commands.py
-│   ├── parser.py
+│   ├── __init__.py
+│   ├── commands.py
+│   ├── parser.py
 │
 ├── data/
-│   └── addressbook.pkl
+│   └── addressbook.pkl
 │
 ├── requirements.txt
 │
 └── README.md
-</pre>
+```
+
+---
+
+## Збереження даних
+
+Всі зміни автоматично зберігаються у файл `data/addressbook.pkl` при виході з програми і завантажуються при запуску.
+
+---
+
+## Залежності
+
+Всі залежності описані у файлі `requirements.txt`. Для встановлення виконайте:
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+Дякуємо за використання Assistant Bot!
+
+```
+
 ```

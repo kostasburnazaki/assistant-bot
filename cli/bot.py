@@ -44,6 +44,107 @@ def main():
     console = Console()
     console.print(
         "[bold green]Бот-помічник запущено. Введіть команду або 'exit'/'close' для виходу. help для справки[/bold green]")
+
+    def cmd_hello(args):
+        if args:
+            console.print("[bold red]Команда 'hello' не приймає аргументів[/bold red]")
+        else:
+            print(show_help())
+
+    def cmd_help(args):
+        if args:
+            console.print("[bold red]Команда 'help' не приймає аргументів[/bold red]")
+        else:
+            print(show_help())
+
+    def cmd_add(args):
+        print(add_contact(args, book))
+
+    def cmd_change(args):
+        print(change_contact(args, book))
+
+    def cmd_phone(args):
+        print(show_phone(args, book))
+
+    def cmd_remove_phone(args):
+        print(delete_phone(args, book))
+
+    def cmd_remove_contact(args):
+        print(remove_contact(args, book))
+
+    def cmd_all(args):
+        print(show_all(book))
+
+    def cmd_add_birthday(args):
+        print(add_birthday(args, book))
+
+    def cmd_show_birthday(args):
+        print(show_birthday(args, book))
+
+    def cmd_birthdays(args):
+        print(birthdays(args, book))
+
+    def cmd_search(args):
+        print(search(args, book))
+
+    def cmd_email(args):
+        print(add_email(args, book))
+
+    def cmd_edit_email(args):
+        print(edit_email(args, book))
+
+    def cmd_address(args):
+        print(add_address(args, book))
+
+    def cmd_note_add(args):
+        print(note_add(tuple(args), notes_book))
+
+    def cmd_note_edit(args):
+        print(note_edit(tuple(args), notes_book))
+
+    def cmd_note_delete(args):
+        print(note_delete(tuple(args), notes_book))
+
+    def cmd_note_search(args):
+        print(note_search(tuple(args), notes_book))
+
+    def cmd_note_tag(args):
+        print(note_tag(tuple(args), notes_book))
+
+    def cmd_note_list(args):
+        print(note_list(tuple(args), notes_book))
+
+    def cmd_exit(args):
+        save_data(book)
+        print("Вихід з програми.")
+        exit()
+
+    dispatch = {
+        "hello": cmd_hello,
+        "help": cmd_help,
+        "add": cmd_add,
+        "change": cmd_change,
+        "phone": cmd_phone,
+        "remove-phone": cmd_remove_phone,
+        "remove-contact": cmd_remove_contact,
+        "all": cmd_all,
+        "add-birthday": cmd_add_birthday,
+        "show-birthday": cmd_show_birthday,
+        "birthdays": cmd_birthdays,
+        "search": cmd_search,
+        "email": cmd_email,
+        "edit-email": cmd_edit_email,
+        "address": cmd_address,
+        "note-add": cmd_note_add,
+        "note-edit": cmd_note_edit,
+        "note-delete": cmd_note_delete,
+        "note-search": cmd_note_search,
+        "note-tag": cmd_note_tag,
+        "note-list": cmd_note_list,
+        "exit": cmd_exit,
+        "close": cmd_exit,
+    }
+
     while True:
         console.print("[bold blue]Enter command:[/bold blue]", end=" ")
         user_input = input()
@@ -57,78 +158,12 @@ def main():
             console.print(f"[bold red]{error}[/bold red]")
             continue
 
-        if command in ["close", "exit"]:
-            save_data(book)
-            print("Вихід з програми.")
-            break
-
-        elif command in ("hello", "help") and not args:
-            print(show_help())
-
-        elif command == "add":
-            print(add_contact(args, book))
-
-        elif command == "change":
-            print(change_contact(args, book))
-
-        elif command == "phone":
-            print(show_phone(args, book))
-
-        elif command == "remove-phone":
-            print(delete_phone(args, book))
-
-        elif command == "remove-contact":
-            print(remove_contact(args, book))
-
-        elif command == "all":
-            print(show_all(book))
-
-        elif command == "add-birthday":
-            print(add_birthday(args, book))
-
-        elif command == "show-birthday":
-            print(show_birthday(args, book))
-
-        elif command == "birthdays":
-            print(birthdays(args, book))
-
-        elif command == "search":
-            print(search(args, book))
-
-        elif command == "email":
-            print(add_email(args, book))
-
-        elif command == "edit-email":
-            print(edit_email(args, book))
-
-        elif command == "address":
-            print(add_address(args, book))
-
-        elif command == "note-add":
-            print(note_add(tuple(args), notes_book))
-
-        elif command == "note-edit":
-            print(note_edit(tuple(args), notes_book))
-
-        elif command == "note-delete":
-            print(note_delete(tuple(args), notes_book))
-
-        elif command == "note-search":
-            print(note_search(tuple(args), notes_book))
-
-        elif command == "note-tag":
-            print(note_tag(tuple(args), notes_book))
-
-        elif command == "note-list":
-            print(note_list(tuple(args), notes_book))
-
+        func = dispatch.get(command)
+        if func:
+            func(args)
         else:
-
             suggestion = suggest_command(command, AVAILABLE_COMMANDS)
-
             if suggestion:
-                console.print(
-                    f"[yellow]Unknown command '{command}'. Did you mean[/yellow] [bold]{suggestion}[/bold]?"
-                )
+                console.print(f"[yellow]Unknown command '{command}'. Did you mean[/yellow] [bold]{suggestion}[/bold]?")
             else:
                 console.print("[bold red]Invalid command.[/bold red]")

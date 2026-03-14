@@ -1,6 +1,6 @@
-.idea/*
+.idea/
 .vscode/
 .venv/
-**/__pycache__
+**/__pycache__/
 *.egg-info/
-**/addressbook.pkl
+data/

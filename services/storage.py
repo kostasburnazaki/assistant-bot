@@ -4,6 +4,7 @@ from models.addressbook import AddressBook
 
 
 def save_data(book: AddressBook, filename: str = "data/addressbook.pkl") -> None:
+    os.makedirs(os.path.dirname(filename), exist_ok=True)  # створює папку, якщо нема
     with open(filename, "wb") as f:
         pickle.dump(book, f)
 
